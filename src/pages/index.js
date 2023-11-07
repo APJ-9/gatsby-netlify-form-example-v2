@@ -1,11 +1,34 @@
 import * as React from "react";
 import "./index.css";
-import { navigate } from "gatsby";
-import Modal from "../components/Modal";
 import { useState } from "react";
 
+const Modal = ({ isOpen, closeModal, children }) => {
+	return (
+		isOpen && (
+			<div className="modal">
+				<div className="modal-content">
+					<span className="close" onClick={closeModal}>
+						&times;
+					</span>
+					{children}
+				</div>
+			</div>
+		)
+	);
+};
+
 const IndexPage = () => {
-	const [formSubmit, setFormSubmit] = useState("");
+	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [statusCode, setStatusCode] = useState();
+
+	const openModal = () => {
+		setIsModalOpen(true);
+	};
+
+	const closeModal = () => {
+		setIsModalOpen(false);
+	};
+
 	const handleSubmit = (event) => {
 		event.preventDefault();
 
@@ -18,16 +41,13 @@ const IndexPage = () => {
 			body: new URLSearchParams(formData).toString(),
 		})
 			.then((response) => {
-				if (!response.ok) {
-					throw new Error(`HTTP error! Status: ${response.status}`);
+				const StatusCode = response.status;
+				setStatusCode(StatusCode);
+				if (StatusCode === 200) {
+					openModal();
+				} else {
+					closeModal();
 				}
-				return response; // Pass the response to the next .then()
-			})
-			.then((response) => {
-				// Access the status code
-				const statusCode = response.status;
-				// Handle the response as needed
-				return response.text(); // Example: Return the response text
 			})
 
 			.catch((error) => {
@@ -66,6 +86,11 @@ const IndexPage = () => {
 				<button type="submit">Send</button>
 				<input type="reset" value="Clear" />
 			</form>
+			<Modal isOpen={isModalOpen} closeModal={closeModal}>
+				<h2>Modal Content</h2>
+				<p>This is a simple modal component.</p>
+				<p>{statusCode}</p>
+			</Modal>
 		</main>
 	);
 };
