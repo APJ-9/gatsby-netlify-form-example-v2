@@ -29,30 +29,31 @@ const IndexPage = () => {
 		setIsModalOpen(false);
 	};
 
-	const handleSubmit = (event) => {
+	const handleSubmit = async (event) => {
 		event.preventDefault();
-
 		const myForm = event.target;
 		const formData = new FormData(myForm);
 
-		fetch("/", {
-			method: "POST",
-			headers: { "Content-Type": "application/x-www-form-urlencoded" },
-			body: new URLSearchParams(formData).toString(),
-		})
-			.then((response) => {
-				const StatusCode = response.status;
-				setStatusCode(StatusCode);
-				if (StatusCode === 200) {
-					openModal();
-				} else {
-					closeModal();
-				}
-			})
-
-			.catch((error) => {
-				alert(`Error: ${error.message}`);
+		try {
+			const response = await fetch("/", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/x-www-form-urlencoded",
+				},
+				body: new URLSearchParams(formData).toString(),
 			});
+
+			const StatusCode = response.status;
+			setStatusCode(StatusCode);
+
+			if (StatusCode === 200) {
+				openModal();
+			} else {
+				closeModal();
+			}
+		} catch (error) {
+			setStatusCode(400);
+		}
 	};
 
 	return (
