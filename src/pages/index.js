@@ -87,6 +87,7 @@ const IndexPage = () => {
 				<button type="submit">Send</button>
 				<input type="reset" value="Clear" />
 			</form>
+			{/* TODO modify in future */}
 			<Modal isOpen={isModalOpen} closeModal={closeModal}>
 				<h2>Modal Content</h2>
 				<p>This is a simple modal component.</p>
